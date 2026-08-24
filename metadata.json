@@ -1,0 +1,6 @@
+{
+  "name": "WuuWuu Clock",
+  "description": "Traffic signal cosmic clock combining deterministic Panchang timing lights, analog clock overlay with two-tone digital display, and atmospheric natural sky weather elements.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
