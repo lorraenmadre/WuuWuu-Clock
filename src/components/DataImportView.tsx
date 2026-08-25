@@ -12,7 +12,7 @@ import {
   ArrowRight,
   ShieldAlert,
 } from 'lucide-react';
-import { DayData, TimingPeriod } from '../types';
+import { DayData, TimingPeriod, PanchangClassification } from '../types';
 import {
   MIAMI_AUG_24_DAY_DATA,
   RAW_PASTE_EXAMPLE,
@@ -83,8 +83,6 @@ export const DataImportView: React.FC<DataImportViewProps> = ({
           (p: any, idx: number) => {
             const canonicalName = getCanonicalPanchangName(p.name);
             const deterministicClassification = classifyPanchangPeriod(p.name);
-            const validClassification: 'green' | 'red' =
-              deterministicClassification === 'green' ? 'green' : 'red';
 
             return {
               id: p.id || `custom-${idx}-${Date.now()}`,
@@ -93,7 +91,7 @@ export const DataImportView: React.FC<DataImportViewProps> = ({
               end: p.endTime,
               startMinutes: parseTimeToMinutes(p.startTime),
               endMinutes: parseTimeToMinutes(p.endTime),
-              classification: validClassification,
+              classification: deterministicClassification,
               category: 'panchang',
               description: p.description || '',
             };
@@ -393,17 +391,20 @@ export const DataImportView: React.FC<DataImportViewProps> = ({
                     handleUpdatePeriodField(
                       p.id,
                       'classification',
-                      e.target.value as 'green' | 'red'
+                      e.target.value as PanchangClassification
                     )
                   }
                   className={`bg-white border rounded-lg px-2 py-1 text-xs font-semibold ${
                     p.classification === 'green'
                       ? 'text-emerald-700 border-emerald-200'
-                      : 'text-rose-700 border-rose-200'
+                      : p.classification === 'red'
+                      ? 'text-rose-700 border-rose-200'
+                      : 'text-slate-700 border-slate-200'
                   }`}
                 >
                   <option value="green">🟢 Auspicious (Green)</option>
                   <option value="red">🔴 Inauspicious (Red)</option>
+                  <option value="gray">⚪ Neutral / Unclassified (Gray)</option>
                 </select>
 
                 <input

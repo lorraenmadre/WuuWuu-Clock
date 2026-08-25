@@ -1,6 +1,6 @@
 export type TrafficColor = 'green' | 'red' | 'yellow' | 'gray';
 
-export type PanchangClassification = 'green' | 'red';
+export type PanchangClassification = 'green' | 'red' | 'gray';
 
 export interface TimingPeriod {
   id: string;

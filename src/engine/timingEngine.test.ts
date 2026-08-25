@@ -375,8 +375,48 @@ describe('Deterministic Panchang Classification Registry', () => {
     expect(classifyPanchangPeriod('Varjyam')).toBe('red');
     expect(classifyPanchangPeriod('Bhadra')).toBe('red');
 
-    // Unknown fallback
+    // Unknown fallback: MUST remain gray and NEVER default to red or green
     expect(classifyPanchangPeriod('Custom Meditation Time')).toBe('gray');
+    expect(classifyPanchangPeriod('Random Unrecognized Period')).toBe('gray');
+    expect(classifyPanchangPeriod('Team Sync Meeting')).toBe('gray');
+  });
+
+  it('evaluates timeline segments with unknown/unrecognized periods as gray and never red', () => {
+    const dummySun: SunData = {
+      sunrise: '06:00',
+      sunset: '18:00',
+      sunriseMinutes: 360,
+      sunsetMinutes: 1080,
+    };
+
+    // Unknown period imported or defined by user
+    const unknownPeriodName = 'Custom Meditation Time';
+    const classification = classifyPanchangPeriod(unknownPeriodName);
+    expect(classification).toBe('gray');
+
+    const periods: TimingPeriod[] = [
+      {
+        id: 'custom-meditation-1',
+        name: unknownPeriodName,
+        start: '10:00',
+        end: '11:00',
+        startMinutes: 600,
+        endMinutes: 660,
+        classification, // 'gray'
+        category: 'panchang',
+      },
+    ];
+
+    const timeline = generateDailyTimeline(dummySun, periods);
+
+    // Segment during Custom Meditation Time (10:30 AM = 630 min)
+    const segment = getSegmentAtTime(timeline, 630);
+    expect(segment).toBeDefined();
+    expect(segment?.color).toBe('gray');
+    expect(segment?.color).not.toBe('red');
+    expect(segment?.color).not.toBe('green');
+    expect(segment?.ruleTriggered).toBe('neutral_gray');
+    expect(segment?.reason).toBe('Custom Meditation Time');
   });
 
   it('normalizes names to canonical registry titles', () => {

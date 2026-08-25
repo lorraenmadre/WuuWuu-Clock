@@ -164,6 +164,11 @@ export function generateDailyTimeline(
       (p) => p.startMinutes <= start && p.endMinutes >= end
     );
 
+    // Auspicious and inauspicious timing conditions that drive color states
+    const activeClassified = activePeriods.filter(
+      (p) => p.classification === 'green' || p.classification === 'red'
+    );
+
     // Golden hour status
     const isDawnGoldenHour = mid >= dawnStart && mid < dawnEnd;
     const isDuskGoldenHour = mid >= duskStart && mid < duskEnd;
@@ -196,15 +201,15 @@ export function generateDailyTimeline(
       }
     }
     // Rule 2: Any overlap of two or more timing conditions becomes Yellow
-    else if (activePeriods.length > 1) {
+    else if (activeClassified.length > 1) {
       color = 'yellow';
       ruleTriggered = 'multi_condition_overlap';
-      const names = activePeriods.map((p) => p.name.replace(/ Muhurta| Kala| Gadiyas/gi, ''));
+      const names = activeClassified.map((p) => p.name.replace(/ Muhurta| Kala| Gadiyas/gi, ''));
       reason = `${names.join(' + ')} overlap`;
     }
-    // Rule 4 & 5: Single Panchang period
-    else if (activePeriods.length === 1) {
-      const p = activePeriods[0];
+    // Rule 4 & 5: Single Panchang period (Auspicious / Inauspicious)
+    else if (activeClassified.length === 1) {
+      const p = activeClassified[0];
       if (p.classification === 'red') {
         color = 'red';
         ruleTriggered = 'single_inauspicious_red';
@@ -218,11 +223,13 @@ export function generateDailyTimeline(
         } else {
           reason = p.name;
         }
-      } else {
-        color = 'gray';
-        ruleTriggered = 'neutral_gray';
-        reason = 'Neutral';
       }
+    }
+    // Rule 6: Unclassified / Gray periods remain Gray
+    else if (activePeriods.length > 0) {
+      color = 'gray';
+      ruleTriggered = 'neutral_gray';
+      reason = activePeriods[0].name || 'Neutral';
     }
     // Rule 6: Anything else is Gray
     else {
