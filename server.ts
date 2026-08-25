@@ -49,15 +49,14 @@ app.post("/api/gemini/parse-timing", async (req, res) => {
       return;
     }
 
-    const prompt = `You are a Vedic Astrology Panchang parser. Convert the following pasted text into a structured timing dataset for date ${
+    const prompt = `You are a factual Vedic Astrology Panchang parser. Convert the following pasted text into a structured timing dataset for date ${
       targetDate || "2026-08-24"
     } and timezone ${timezone || "America/New_York"}.
 Extract:
 1. Sunrise time (HH:MM in 24h format or with AM/PM).
 2. Sunset time (HH:MM in 24h format or with AM/PM).
-3. All auspicious (green) and inauspicious (red) periods with their exact name, classification ('green' or 'red'), start time, and end time.
-Common inauspicious: Rahu Kala, Yamaganda, Gulika / Gulika Kala, Dur Muhurtam, Varjyam. (classification = 'red')
-Common auspicious: Brahma Muhurta, Amrita Gadiyas, Abhijit Muhurta, Shuba Muhurtham. (classification = 'green')
+3. All Panchang periods mentioned (such as Rahu Kala, Yamaganda, Gulika, Brahma Muhurta, Amrita Gadiyas, Abhijit Muhurta, Varjyam, Dur Muhurtam, etc.) with their exact name, start time, and end time.
+Do NOT attempt to determine traffic color or classification.
 4. Optional Moon Nakshatra and Moon House if mentioned in text.
 
 Pasted raw text:
@@ -65,7 +64,7 @@ Pasted raw text:
 ${rawText}
 """
 
-Ensure timestamps are formatted as ISO strings or HH:mm military format for the target date.`;
+Ensure timestamps are formatted as HH:mm military format for the target date.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.7-flash",
@@ -89,13 +88,9 @@ Ensure timestamps are formatted as ISO strings or HH:mm military format for the 
                   name: { type: Type.STRING },
                   startTime: { type: Type.STRING, description: "HH:mm format (24hr)" },
                   endTime: { type: Type.STRING, description: "HH:mm format (24hr)" },
-                  classification: {
-                    type: Type.STRING,
-                    description: "Must be 'green' or 'red'",
-                  },
                   description: { type: Type.STRING },
                 },
-                required: ["name", "startTime", "endTime", "classification"],
+                required: ["name", "startTime", "endTime"],
               },
             },
           },

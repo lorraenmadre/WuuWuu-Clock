@@ -4,10 +4,10 @@ import { MIAMI_AUG_24_DAY_DATA } from '../engine/testFixture';
 export { MIAMI_AUG_24_DAY_DATA };
 
 export const DEFAULT_USER_PROFILE: UserProfile = {
-  name: 'Rae',
-  birthDate: '1988-12-01',
-  birthTime: '20:24',
-  birthLocation: 'Miami, Florida',
+  name: 'Alex Rivera',
+  birthDate: '1995-06-15',
+  birthTime: '12:00',
+  birthLocation: 'Demo City, FL',
   timezone: 'America/New_York',
   latitude: 25.7617,
   longitude: -80.1918,

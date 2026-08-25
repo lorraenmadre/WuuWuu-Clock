@@ -19,6 +19,10 @@ import {
   SAMPLE_DATASETS,
 } from '../data/defaultData';
 import { parseTimeToMinutes } from '../engine/timingEngine';
+import {
+  classifyPanchangPeriod,
+  getCanonicalPanchangName,
+} from '../engine/panchangRegistry';
 
 interface DataImportViewProps {
   currentDayData: DayData;
@@ -76,17 +80,24 @@ export const DataImportView: React.FC<DataImportViewProps> = ({
         const sunsetMin = parseTimeToMinutes(d.sunset || editableSunset);
 
         const newPeriods: TimingPeriod[] = (d.periods || []).map(
-          (p: any, idx: number) => ({
-            id: p.id || `custom-${idx}-${Date.now()}`,
-            name: p.name,
-            start: p.startTime,
-            end: p.endTime,
-            startMinutes: parseTimeToMinutes(p.startTime),
-            endMinutes: parseTimeToMinutes(p.endTime),
-            classification: (p.classification === 'green' ? 'green' : 'red') as 'green' | 'red',
-            category: 'panchang',
-            description: p.description || '',
-          })
+          (p: any, idx: number) => {
+            const canonicalName = getCanonicalPanchangName(p.name);
+            const deterministicClassification = classifyPanchangPeriod(p.name);
+            const validClassification: 'green' | 'red' =
+              deterministicClassification === 'green' ? 'green' : 'red';
+
+            return {
+              id: p.id || `custom-${idx}-${Date.now()}`,
+              name: canonicalName,
+              start: p.startTime,
+              end: p.endTime,
+              startMinutes: parseTimeToMinutes(p.startTime),
+              endMinutes: parseTimeToMinutes(p.endTime),
+              classification: validClassification,
+              category: 'panchang',
+              description: p.description || '',
+            };
+          }
         );
 
         setEditableSunrise(d.sunrise || editableSunrise);

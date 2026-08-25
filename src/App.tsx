@@ -56,16 +56,15 @@ export default function App() {
   // Sleep mode state (manual toggle)
   const [isSleeping, setIsSleeping] = useState<boolean>(false);
 
-  // Time simulation state
-  // Default to 10:41 AM (641 mins) on initial load as highlighted in PRD section 9, or live time
+  // Time state: Live device time is the default application state
   const getDeviceMinutes = () => {
     const now = new Date();
     return now.getHours() * 60 + now.getMinutes();
   };
 
-  // We start by default in Miami benchmark time (10:41 AM = 641 min) to match the PRD's exact home screen demo
-  const [currentSimulatedMinutes, setCurrentSimulatedMinutes] = useState<number>(641);
-  const [isSimulating, setIsSimulating] = useState<boolean>(true);
+  // Live device time is default; simulation mode only activates deliberately from Debug
+  const [currentSimulatedMinutes, setCurrentSimulatedMinutes] = useState<number>(getDeviceMinutes);
+  const [isSimulating, setIsSimulating] = useState<boolean>(false);
 
   // Audio tone notification toggle
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
