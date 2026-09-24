@@ -1,3 +1,5 @@
+> Current planning rules: [WISH WELL 2026-09-24.1](WISH_WELL_PLANNING.md). Read this correction before older House 3/8/9 definitions.
+
 # WuuWuu Clock
 
 A deterministic cosmic timing clock combining traditional Vedic Panchang intervals with intuitive traffic-signal illumination, an analog watch dial overlay with celestial vector glyphs, and natural atmospheric sky elements.
